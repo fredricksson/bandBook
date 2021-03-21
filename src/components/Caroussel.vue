@@ -1,24 +1,21 @@
 <template>
+
     <q-carousel
       swipeable
       animated
       v-model="slide"
       thumbnails
       infinite
+      style="max-height: 300px"
     >
-      <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg" >
+        <q-carousel-slide :name="1" :img-src="image" :ratio="4/3" >
          <div class="absolute-top custom-caption">
-          <div class="text-subtitle1" >Famous City</div>
-        </div>
-      </q-carousel-slide>
-      <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg" >
-    <div class="absolute-top custom-caption">
-          <div class="text-subtitle1" >Famous City</div>
-        </div>
-      </q-carousel-slide>
-      <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg" >
-        <div class="absolute-top custom-caption">
-          <div class="text-subtitle1" >Famous City</div>
+           <q-icon class="absolute all-pointer-events" size="32px" name="add_photo_alternate" color="dark" style="top: 8px; left: 8px">
+            <q-tooltip>
+              imagens
+            </q-tooltip>
+          </q-icon>
+          <div class="text-subtitle1" >{{ title}}</div>
         </div>
       </q-carousel-slide>
     </q-carousel>
@@ -26,6 +23,7 @@
 
 <script>
 export default {
+  props: ['title', 'image'],
   data () {
     return {
       slide: 1

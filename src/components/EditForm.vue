@@ -78,17 +78,6 @@
            <div class="col-12">
                <p class="text-overline"> Capa do livro</p>
            </div>
-           <div class="col-12">
-                            <q-input outlined v-model="book.edition" label="Edição"
-                            ref="edition"
-                            lazy-rules
-                            :rules="[ val => val && val.length > 0 || 'Campo vazio']"
-                            >
-                                <template v-slot:prepend>
-                                <q-icon name="attribution" />
-                                </template>
-                            </q-input>
-            </div>
          <div class="col-12">
            <q-img
           :src="imgPreview"
@@ -98,7 +87,7 @@
          </div>
         </div>
         <div class="row">
-          <div class="col-12">
+          <div class="col">
             <q-input
               @input="val => { file = val[0] }"
               filled
@@ -116,7 +105,7 @@
       </q-step>
       <template v-slot:navigation>
         <q-stepper-navigation>
-          <q-btn @click="stepper()" color="primary" :label="step === 2 ? 'Salvar' : 'Continue'" />
+          <q-btn @click="stepper()" color="primary" :label="step === 2 ? 'Actualizar' : 'Continue'" />
           <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
         </q-stepper-navigation>
       </template>
@@ -125,7 +114,7 @@
 </template>
 <script>
 export default {
-  name: 'FormBook',
+  name: 'EditForm',
   props: ['book'],
   data () {
     return {
@@ -163,15 +152,13 @@ export default {
           }
         } else if (this.step === 2) {
           this.$refs.image.validate()
-          this.$refs.edition.validate()
 
-          if (this.$refs.image.hasError || this.$refs.edition.hasError) {
+          if (this.$refs.image.hasError) {
             this.formHasError = true
             this.error2 = true
           } else {
             this.error2 = false
-            // it will run method save in Mybooks.vue
-            this.$emit('save', this.file)
+            this.$emit('update')
           }
         }
       }

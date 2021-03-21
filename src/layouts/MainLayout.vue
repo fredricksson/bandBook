@@ -12,8 +12,8 @@
       </q-toolbar>
 
       <q-tabs align="left">
-        <q-route-tab to="/page1" label="Meus livros" />
-        <q-route-tab to="/page2" label="Livros Desejados" />
+        <q-route-tab to="/myBooks" label="Meus livros" />
+        <q-route-tab to="/desiredBooks" label="Livros Desejados" />
       </q-tabs>
     </q-header>
 
