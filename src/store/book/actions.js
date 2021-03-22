@@ -40,7 +40,15 @@ const setBook = ({ commit }, id) => {
       })
   })
 }
+const addBook = ({ commit }, data) => {
+  commit('ADD_BOOK', data)
+}
+const removeBook = ({ commit }, index) => {
+  commit('REMOVE_BOOK', index)
+}
 export {
   setBooks,
-  setBook
+  setBook,
+  addBook,
+  removeBook
 }

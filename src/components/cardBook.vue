@@ -2,10 +2,10 @@
   <div>
       <q-card class="my-card">
         <div class="col-6">
-        <q-img :src="book.image_url" style="max-height: 300px">
+        <q-img :src="book.image_url" style="height: 300px">
           <div class="absolute-top text-center text-subtitle1">
             {{book.title}}
-            <q-icon class="absolute all-pointer-events" size="32px" name="add_photo_alternate" color="white" style="top: 8px; left: 8px">
+            <q-icon @click="addImage(book.id)" class="absolute all-pointer-events" size="32px" name="add_photo_alternate" color="white" style="top: 8px; left: 8px">
             <q-tooltip>
               imagens
             </q-tooltip>
@@ -40,7 +40,7 @@
       </q-card-section>
       <q-card-actions  style="background-color: black">
         <q-btn flat  :loading="loading" rounded  icon="info"  color="primary"  @click="singleBook(book.id)" />
-        <q-btn flat   :loading="loading2" rounded icon="create"  color="secondary"  @click="edit = true" />
+        <q-btn flat   :loading="loading2" rounded icon="create"  color="secondary"  @click="editbook(book.id)" />
         <q-btn flat   :loading="loading3" rounded  icon="remove_circle_outline" color="red"  @click="confirm = true"/>
       </q-card-actions>
     </q-card>
@@ -48,7 +48,7 @@
       <single-book :bookInfo="info"/>
     </q-dialog>
     <q-dialog v-model="edit">
-      <edit-form :book="book" @update="update()"/>
+      <edit-form :book="bookEdit" @update="update()"/>
     </q-dialog>
     <q-dialog v-model="confirm" persistent>
       <q-card>
@@ -63,19 +63,27 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="addimage" >
+      <form-image :id="book.id"/>
+    </q-dialog>
   </div>
 </template>
 
 <script>
+import firebase from 'firebase'
 import EditForm from './EditForm.vue'
 import SingleBook from './SingleBook.vue'
 import { mapActions, mapState } from 'vuex'
 import Vue from 'vue'
+import FormImage from './FormImage.vue'
 export default {
-  components: { EditForm, SingleBook },
+  components: { EditForm, SingleBook, FormImage },
   props: ['book'],
   data () {
     return {
+      bookEdit: '',
+      title: '',
+      addimage: false,
       loading: false,
       loading2: false,
       loading3: false,
@@ -91,6 +99,9 @@ export default {
   },
   methods: {
     ...mapActions('book', ['setBook']),
+    addImage () {
+      this.addimage = true
+    },
     singleBook (id) {
       this.loading = true
       this.setBook(id).then((info) => {
@@ -101,15 +112,33 @@ export default {
       })
       // console.log(this.setBook(id))
     },
+    editbook (id) {
+      this.loading2 = true
+      this.setBook(id).then((info) => {
+        this.bookEdit = info
+        this.edit = true
+        this.loading2 = false
+      })
+      // console.log(this.setBook(id))
+    },
     update () {
       console.log('actualizar')
     },
     deleteBook (id) {
       this.loading3 = true
+
       Vue.prototype.$axios.delete(`${process.env.API}api/v1/book/${id}`)
         .then(response => {
           this.$emit('removeIndex')
           this.loading3 = false
+          response.data.images.forEach(image => {
+            var storageRef = firebase.storage().ref()
+            var desertRef = storageRef.child(image.image_location)
+            desertRef.delete().then(function () {
+            }).catch(function (error) {
+              console.log(error)
+            })
+          })
         })
     }
   },

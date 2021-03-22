@@ -48,9 +48,9 @@
                              />
                         </div>
                         <div class="col-12">
-                            <q-input outlined  v-model="book.isnb" suffix="Opcional" label="Identificacao do livro"
+                            <q-input outlined  v-model="book.isbn" suffix="Opcional" label="Identificacao do livro"
                             mask="###-###-###-###-#"
-                            ref="isnb"
+                            ref="isbn"
                             lazy-rules
                             :rules="[ val => val && val.length === 17 || val.length === 0  || `indetificação de livro inválida `]"
                             >
@@ -152,9 +152,9 @@ export default {
           this.$refs.title.validate()
           this.$refs.author.validate()
           this.$refs.status.validate()
-          this.$refs.isnb.validate()
+          this.$refs.isbn.validate()
 
-          if (this.$refs.title.hasError || this.$refs.author.hasError || this.$refs.isnb.hasError || this.$refs.isnb.hasError) {
+          if (this.$refs.title.hasError || this.$refs.author.hasError || this.$refs.isbn.hasError || this.$refs.isbn.hasError) {
             this.formHasError = true
             this.error = true
           } else {

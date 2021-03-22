@@ -2,10 +2,10 @@
   <q-page class="container" padding>
     <!-- content -->
     <nav-bar @showDialog="inception = true"/>
-    <div v-if="true">
+    <div v-if="books.length">
       <div class="row  q-gutter-md q-pa-md justify-center">
           <div class="col-md-3 col-12" v-for="(book,index) in books" :key="index">
-            <card-book :book="book" @removeIndex="removeIndex(index)"/>
+            <card-book :book="book" @removeIndex="removeIndex(index, book.title)"/>
           </div>
       </div>
     </div>
@@ -51,11 +51,11 @@ export default {
       uploadValue: 0,
       percentage: 0,
       dialog: null,
-      book: { title: '', author: '', isnb: '', status: '', edition: '', images: [{ image_url: '', imageLocation: '', isCover: true }] }
+      book: { title: '', author: '', isbn: '', status: '', edition: '', images: [{ image_url: '', image_location: '', isCover: true }] }
       /* books: [
-        { title: 'fred1', author: '', isnb: '', status: '' },
-        { title: 'fred2', author: '', isnb: '', status: '' },
-        { title: 'fred2', author: '', isnb: '', status: '' }
+        { title: 'fred1', author: '', isbn: '', status: '' },
+        { title: 'fred2', author: '', isbn: '', status: '' },
+        { title: 'fred2', author: '', isbn: '', status: '' }
       ] */
     }
   },
@@ -63,8 +63,12 @@ export default {
     ...mapState('book', ['books'])
   },
   methods: {
-    removeIndex (index) {
-      this.books.splice(index, 1)
+    removeIndex (index, title) {
+      this.removeBook(index)
+      this.$q.notify({
+        type: 'negative',
+        message: `O ${title} foi apagado`
+      })
     },
     saveImgFirebase (file) {
       var dialog = this.$q.dialog({
@@ -80,7 +84,7 @@ export default {
       })
       const location = `bookImgs/${file.name}`
       const storageRef = firebase.storage().ref().child(location).put(file)
-      this.book.images[0].imageLocation = location
+      this.book.images[0].image_location = location
       storageRef.on('state_changed', snapshot => {
         this.uploadValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         // we update the dialog
@@ -115,17 +119,22 @@ export default {
                 progress: false,
                 ok: true
               })
-              this.books.unshift({ id: response.data.id, title: this.book.title, status: this.book.status, author: this.book.author, image_url: url })
+              this.book = { title: '', author: '', isbn: '', status: '', edition: '', images: [{ image_url: '', image_location: '', isCover: true }] }
+              this.addBook({ id: response.data.id, title: response.data.title, status: response.data.status, author: response.data.author, image_url: url })
             })
+          this.inception = false
           this.uploadValue = 0
+          this.$q.notify({
+            type: 'positive',
+            message: 'Capa adicionada com sucesso'
+          })
         })
       }
       )
     },
-    ...mapActions('book', ['setBooks']),
+    ...mapActions('book', ['setBooks', 'addBook', 'removeBook']),
     save (payload) {
       this.saveImgFirebase(payload)
-      console.log(payload)
     }
   },
 
