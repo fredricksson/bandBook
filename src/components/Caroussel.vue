@@ -1,5 +1,4 @@
 <template>
-
     <q-carousel
       swipeable
       animated
@@ -8,14 +7,9 @@
       infinite
       style="max-height: 300px"
     >
-        <q-carousel-slide :name="1" :img-src="image" :ratio="4/3" >
-         <div class="absolute-top custom-caption">
-           <q-icon class="absolute all-pointer-events" size="32px" name="add_photo_alternate" color="dark" style="top: 8px; left: 8px">
-            <q-tooltip>
-              imagens
-            </q-tooltip>
-          </q-icon>
-          <div class="text-subtitle1" >{{ title}}</div>
+        <q-carousel-slide :name="1" :img-src="image.image_url" :ratio="4/3" v-for="(image, index) in images" :key="index">
+         <div class="absolute-top custom-caption  text-subtitle1 flex flex-center">
+           {{title}}
         </div>
       </q-carousel-slide>
     </q-carousel>
@@ -23,7 +17,7 @@
 
 <script>
 export default {
-  props: ['title', 'image'],
+  props: ['title', 'images'],
   data () {
     return {
       slide: 1

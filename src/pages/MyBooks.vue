@@ -5,7 +5,7 @@
     <div v-if="true">
       <div class="row  q-gutter-md q-pa-md justify-center">
           <div class="col-md-3 col-12" v-for="(book,index) in books" :key="index">
-            <card-book :book="book"/>
+            <card-book :book="book" @removeIndex="removeIndex(index)"/>
           </div>
       </div>
     </div>
@@ -13,7 +13,7 @@
         <p class=" absolute-center"> <q-icon color="primary" name="hourglass_disabled" /> sem conteúdo (Livros) </p>
     </div>
     <q-dialog v-model="inception">
-      <form-book :book="book" @save="save"/>
+      <form-book :book="book" @save="save" />
     </q-dialog>
   </q-page>
 </template>
@@ -63,6 +63,9 @@ export default {
     ...mapState('book', ['books'])
   },
   methods: {
+    removeIndex (index) {
+      this.books.splice(index, 1)
+    },
     saveImgFirebase (file) {
       var dialog = this.$q.dialog({
         title: 'enviando dados...',
@@ -75,7 +78,9 @@ export default {
         persistent: true, // we want the user to not be able to close it
         ok: false // we want the user to not be able to close it
       })
-      const storageRef = firebase.storage().ref(`${file.name}`).put(file)
+      const location = `bookImgs/${file.name}`
+      const storageRef = firebase.storage().ref().child(location).put(file)
+      this.book.images[0].imageLocation = location
       storageRef.on('state_changed', snapshot => {
         this.uploadValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         // we update the dialog
@@ -110,6 +115,7 @@ export default {
                 progress: false,
                 ok: true
               })
+              this.books.unshift({ id: response.data.id, title: this.book.title, status: this.book.status, author: this.book.author, image_url: url })
             })
           this.uploadValue = 0
         })

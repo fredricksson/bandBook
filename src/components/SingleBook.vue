@@ -1,56 +1,48 @@
 <template>
-  <div>
-      <q-card class="my-card" style="min-width: 400px">
+  <q-card class="my-card col-12" >
+    <caroussel :title="bookInfo.title" :images="bookInfo.images"/>
         <q-card-section>
-        <div class="text-h6">{{bookInfo.title}}</div>
-      </q-card-section>
-      <q-separator dark  />
+          <q-btn
+            fab
+            color="primary"
+            icon="book"
+            class="absolute"
+            style="top: 0; right: 12px; transform: translateY(-50%);"
+          />
 
-      <q-card-section>
-          <q-list>
-        <q-item clickable>
-          <q-item-section avatar>
-            <q-icon color="primary" name="attribution" />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label>Autor</q-item-label>
-            <q-item-label caption>{{bookInfo.author}}.</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item clickable>
-          <q-item-section avatar>
-            <q-icon color="red" name="vpn_key" />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label>Identificação do livro</q-item-label>
-            <q-item-label caption>{{bookInfo.isbn | msg}}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable>
-          <q-item-section avatar>
-            <q-icon color="red" name="spellcheck" />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label>Edição</q-item-label>
-            <q-item-label caption>{{bookInfo.edition}}</q-item-label>
-          </q-item-section>
-        </q-item>
-          </q-list>
-      </q-card-section>
-    </q-card>
-  </div>
+          <div class="row  items-center">
+            <div class="text-caption text-grey  col-9">
+            Autor:
+          </div>
+            <div class="col text-h6 ellipsis col-12">
+              {{bookInfo.author}}
+            </div>
+            <div class="text-caption text-grey col-9">
+                   Edição:
+              </div>
+            <div class="col-12 text-h6 ">
+              {{bookInfo.edition}}
+            </div>
+          <div class="text-caption text-grey col-12">
+            Identificação:
+          </div>
+          <div class="text-subtitle1 col-12">
+            {{bookInfo.isbn | msg}}
+          </div>
+          </div>
+        </q-card-section>
+  </q-card>
 </template>
 
 <script>
+import Caroussel from './Caroussel.vue'
 export default {
+  components: { Caroussel },
   props: ['bookInfo'],
   filters: {
     msg: function (value) {
       if (!value) return 'sem identificação'
+      else return value
     }
   }
 
