@@ -47,18 +47,6 @@
                             :rules="[ val => val && val.length > 0 || 'Campo vazio']"
                              />
                         </div>
-                        <div class="col-12">
-                            <q-input outlined  v-model="book.isbn" suffix="Opcional" label="Identificacao do livro"
-                            mask="###-###-###-###-#"
-                            ref="isbn"
-                            lazy-rules
-                            :rules="[ val => val && val.length === 17 || val.length === 0 || val === 0 || `indetificação de livro inválida `]"
-                            >
-                                <template v-slot:prepend>
-                                <q-icon name="vpn_key" />
-                                </template>
-                            </q-input>
-                        </div>
                     </div>
                 </q-card-section>
            </q-card>
@@ -67,40 +55,44 @@
 
       <q-step
         :name="2"
-        title="Capa do livro"
+        title="outros dados"
         caption="Optional"
         icon="insert_photo"
         :error="error2"
         :done="step > 2"
       >
-        <template class="justify-center q-pa-md q-gutter-y-sm ">
-       <div class="row">
-           <div class="col-12">
-               <p class="text-overline"> Capa do livro</p>
-           </div>
-         <div class="col-12">
-           <q-img
-          :src="imgPreview"
-          spinner-color="white"
-          style="height: 300px; full-width "
-          />
-         </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <q-input
-              @input="val => { file = val[0] }"
-              filled
-              v-model="file"
-              @change="updatePreview($event)"
-              ref="image"
-              lazy-rules
-             :rules="[ val =>  val && val.length !== 0  || 'Insira uma image ']"
-              type="file"
-              hint="Native file"
-            />
-          </div>
-        </div>
+        <template >
+       <q-card class="my-card ">
+                <q-card-section>
+                    <div class="row q-gutter-md justify-center">
+                      <div class="col-12">
+                            <q-input outlined  v-model="book.isnb" suffix="Opcional" label="Identificacao do livro"
+                            mask="###-###-###-###-#"
+                            ref="isnb"
+                            lazy-rules
+                            :rules="[ val => val && val.length === 17 || val.length === 0 || val === 0 || `indetificação de livro inválida `]"
+                            >
+                                <template v-slot:prepend>
+                                <q-icon name="vpn_key" />
+                                </template>
+                            </q-input>
+                        </div>
+                      <div class="col-12">
+                    </div>
+                    </div>
+                          <div class="col-12">
+                            <q-input outlined v-model="book.edition" label="Edição"
+                            ref="edition"
+                            lazy-rules
+                            :rules="[ val => val && val.length > 0 || 'Campo vazio']"
+                            >
+                                <template v-slot:prepend>
+                                <q-icon name="attribution" />
+                                </template>
+                            </q-input>
+                            </div>
+                </q-card-section>
+       </q-card>
     </template>
       </q-step>
       <template v-slot:navigation>
@@ -116,6 +108,11 @@
 export default {
   name: 'EditForm',
   props: ['book'],
+  created () {
+    if (this.book.isnb == null) this.book.isnb = ''
+    if (this.book.status === 'Wished') this.book.status = 'Propetaria (Detém o livro)'
+    else this.book.status = 'Desejado'
+  },
   data () {
     return {
       error: false,
@@ -141,9 +138,8 @@ export default {
           this.$refs.title.validate()
           this.$refs.author.validate()
           this.$refs.status.validate()
-          this.$refs.isbn.validate()
 
-          if (this.$refs.title.hasError || this.$refs.author.hasError || this.$refs.isbn.hasError || this.$refs.isbn.hasError) {
+          if (this.$refs.title.hasError || this.$refs.author.hasError || this.$refs.status.hasError) {
             this.formHasError = true
             this.error = true
           } else {
@@ -151,14 +147,15 @@ export default {
             this.error = false
           }
         } else if (this.step === 2) {
-          this.$refs.image.validate()
+          this.$refs.isnb.validate()
+          this.$refs.edition.validate()
 
-          if (this.$refs.image.hasError) {
+          if (this.$refs.isnb.hasError || this.$refs.edition.hasError) {
             this.formHasError = true
             this.error2 = true
           } else {
             this.error2 = false
-            this.$emit('update')
+            this.$emit('updateBook', this.book)
           }
         }
       }
@@ -166,7 +163,11 @@ export default {
   },
   computed: {
     imgPreview () {
-      return this.image === '' ? this.imgPlaceolder : this.image
+      let img = ''
+      this.book.images.forEach(image => {
+        if (image.isCover) img = image.image_url
+      })
+      return img
     }
   }
 }

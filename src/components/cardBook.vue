@@ -40,7 +40,7 @@
       </q-card-section>
       <q-card-actions  style="background-color: black">
         <q-btn flat  :loading="loading" rounded  icon="info"  color="primary"  @click="singleBook(book.id)" />
-        <q-btn flat   :loading="loading2" rounded icon="create"  color="secondary"  @click="editbook(book.id)" />
+        <q-btn flat   :loading="loading2" rounded icon="create"  color="secondary"  @click="editbook(book.id)"  />
         <q-btn flat   :loading="loading3" rounded  icon="remove_circle_outline" color="red"  @click="confirm = true"/>
       </q-card-actions>
     </q-card>
@@ -48,7 +48,7 @@
       <single-book :bookInfo="info"/>
     </q-dialog>
     <q-dialog v-model="edit">
-      <edit-form :book="bookEdit" @update="update()"/>
+      <edit-form :book="bookEdit" @updateBook="updateBook"/>
     </q-dialog>
     <q-dialog v-model="confirm" persistent>
       <q-card>
@@ -109,6 +109,18 @@ export default {
         this.info = info
         this.single = true
         this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$q.notify({
+          type: 'negative',
+          message: 'falha ao tentar carregar a tela de detalhes de livro, Verifique se esta conectado a internet',
+          color: 'red',
+          multiLine: true,
+          icon: 'wifi_off',
+          actions: [
+            { label: 'Fechar', color: 'yellow', handler: () => { /* ... */ } }
+          ]
+        })
       })
       // console.log(this.setBook(id))
     },
@@ -118,16 +130,56 @@ export default {
         this.bookEdit = info
         this.edit = true
         this.loading2 = false
+      }).catch(() => {
+        // erro de network
+        this.loading2 = false
+        this.$q.notify({
+          type: 'negative',
+          message: 'falha ao  carregar a tela de edição, Verifique se esta conectado internet',
+          color: 'red',
+          multiLine: true,
+          icon: 'wifi_off',
+          actions: [
+            { label: 'Fechar', color: 'yellow', handler: () => { /* ... */ } }
+          ]
+        })
       })
       // console.log(this.setBook(id))
     },
-    update () {
-      console.log('actualizar')
+    updateBook (book) {
+      // simulating a delay of 2 seconds
+      this.$q.notify({
+        spinner: true,
+        message: 'por favor aguarde...',
+        timeout: 2000
+      })
+      const bookEdit = {
+        status: book.status === 'Desejado' ? 'Wished' : 'Owned',
+        title: book.title,
+        isbn: book.isbn,
+        author: book.author,
+        edition: book.edition
+      }
+      Vue.prototype.$axios.put(`${process.env.API}api/v1/book/${book.id}`, bookEdit)
+        .then((response) => {
+          this.edit = false
+          this.$emit('updateState', response.data)
+          this.$q.notify({
+            type: 'positive',
+            message: 'livro editado com sucesso'
+          })
+        }).catch((erro) => {
+          this.edit = false
+          this.$q.notify({
+            type: 'negative',
+            message: 'erro na edição'
+          })
+          console.log('bug' + erro)
+        })
     },
     deleteBook (id) {
       this.loading3 = true
-
-      Vue.prototype.$axios.delete(`${process.env.API}api/v1/book/${id}`)
+      Vue.prototype.$axios.delete(`https://cors-anywhere.herokuapp.com/${process.env.API}api/v1/book/${id}`)
         .then(response => {
           this.$emit('removeIndex')
           this.loading3 = false
@@ -139,12 +191,24 @@ export default {
               console.log(error)
             })
           })
+        }).catch(() => {
+          this.loading3 = false
+          this.$q.notify({
+            type: 'negative',
+            message: 'falha ao tentar apagar, Verifique se esta conectado a internet',
+            color: 'red',
+            multiLine: true,
+            icon: 'wifi_off',
+            actions: [
+              { label: 'Fechar', color: 'yellow', handler: () => { /* ... */ } }
+            ]
+          })
         })
     }
   },
   filters: {
     msg: function (value) {
-      if (value === 'owned') return 'Propietario (Seu livro)'
+      if (value === 'Owned') return 'Propietario (Seu livro)'
       else return 'Desejado'
     }
   }

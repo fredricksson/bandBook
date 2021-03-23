@@ -1,13 +1,41 @@
 <template>
   <q-page class="container" padding>
     <!-- content -->
-    <nav-bar @showDialog="inception = true"/>
-    <div v-if="books.length">
-      <div class="row  q-gutter-md q-pa-md justify-center">
-          <div class="col-md-3 col-12" v-for="(book,index) in books" :key="index">
-            <card-book :book="book" @removeIndex="removeIndex(index, book.title)"/>
-          </div>
+    <div class="row q-gutter-y-md">
+      <div class="col-12">
+        <nav-bar @showDialog="inception = true" @pesquisar="pesquisar"/>
       </div>
+    <div class="col-12">
+      <div v-if="books.length">
+      <q-card class="my-card q-mt-md">
+        <q-card-section class="q-pb-none">
+        <div class="text-h6">Livros</div>
+      </q-card-section>
+      <q-card-section >
+        <transition
+          appear
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+        >
+          <div v-show="showSimulatedReturnData" class="row  q-gutter-md q-pa-md justify-center">
+            <div class="col-md-3 col-12"  v-for="(book,index) in listBooks" :key="index">
+            <card-book :book="book" @removeIndex="removeIndex(index, book.title)" @updateState="updateState"/>
+          </div>
+          </div>
+        </transition>
+      </q-card-section>
+        <div class="q-pa-lg flex flex-center">
+      <q-pagination
+      v-model="current"
+      :max="max"
+      input
+      @input="loadPage()"
+    />
+      </div>
+      <q-inner-loading :showing="visible">
+        <q-spinner-gears size="50px" color="primary" />
+      </q-inner-loading>
+      </q-card>
     </div>
     <div v-else>
         <p class=" absolute-center"> <q-icon color="primary" name="hourglass_disabled" /> sem conteúdo (Livros) </p>
@@ -15,6 +43,8 @@
     <q-dialog v-model="inception">
       <form-book :book="book" @save="save" />
     </q-dialog>
+    </div>
+    </div>
   </q-page>
 </template>
 
@@ -43,10 +73,18 @@ export default {
   components: { navBar, CardBook, FormBook },
   name: 'MyBooks',
   mounted () {
-    this.setBooks()
+    this.showSimulatedReturnData = true
+    this.setBooksPage().then(() => {
+      this.max = this.numPages
+    })
   },
   data () {
     return {
+      current: 1,
+      max: 0,
+      visible: false,
+      showSimulatedReturnData: false,
+      search: '',
       inception: false,
       uploadValue: 0,
       percentage: 0,
@@ -60,9 +98,33 @@ export default {
     }
   },
   computed: {
-    ...mapState('book', ['books'])
+    ...mapState('book', ['books', 'numPages']),
+    listBooks () {
+      if (this.search === '' || this.search === ' ') {
+        return this.books
+      } else {
+        console.log(this.search)
+        return this.books.filter(book => book.title === this.search)
+      }
+    }
   },
   methods: {
+    loadPage () {
+      this.visible = true
+      this.showSimulatedReturnData = false
+      this.setBooksPage(this.current - 1).then(() => {
+        this.max = this.numPages
+        this.visible = false
+        this.showSimulatedReturnData = true
+      })
+    },
+    updateState (data) {
+      console.log('yes br')
+      this.updateBookAction(data)
+    },
+    pesquisar (title) {
+      this.search = title
+    },
     removeIndex (index, title) {
       this.removeBook(index)
       this.$q.notify({
@@ -121,6 +183,11 @@ export default {
               })
               this.book = { title: '', author: '', isbn: '', status: '', edition: '', images: [{ image_url: '', image_location: '', isCover: true }] }
               this.addBook({ id: response.data.id, title: response.data.title, status: response.data.status, author: response.data.author, image_url: url })
+            }).catch(() => {
+              this.$q.notify({
+                type: 'negative',
+                message: 'ocorreu um erro'
+              })
             })
           this.inception = false
           this.uploadValue = 0
@@ -132,7 +199,7 @@ export default {
       }
       )
     },
-    ...mapActions('book', ['setBooks', 'addBook', 'removeBook']),
+    ...mapActions('book', ['setBooks', 'addBook', 'removeBook', 'updateBookAction', 'setBooksPage']),
     save (payload) {
       this.saveImgFirebase(payload)
     }

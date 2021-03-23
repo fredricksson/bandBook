@@ -73,12 +73,9 @@
         :error="error2"
         :done="step > 2"
       >
-        <template class="justify-center q-pa-md q-gutter-y-sm ">
+        <template class="justify-center q-pa-md q-gutter-md ">
        <div class="row">
-           <div class="col-12">
-               <p class="text-overline"> Capa do livro</p>
-           </div>
-           <div class="col-12">
+          <div class="col-12">
                             <q-input outlined v-model="book.edition" label="Edição"
                             ref="edition"
                             lazy-rules
@@ -89,16 +86,15 @@
                                 </template>
                             </q-input>
             </div>
-         <div class="col-12">
-           <q-img
+            <div class="col-12">
+               <q-separator/>
+            </div>
+          <div class="col-12">
+            <q-img
           :src="imgPreview"
           spinner-color="white"
-          style="height: 300px; full-width "
+          style="height: 300px ; full-width "
           />
-         </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
             <q-input
               @input="val => { file = val[0] }"
               filled
@@ -154,7 +150,7 @@ export default {
           this.$refs.status.validate()
           this.$refs.isbn.validate()
 
-          if (this.$refs.title.hasError || this.$refs.author.hasError || this.$refs.isbn.hasError || this.$refs.isbn.hasError) {
+          if (this.$refs.title.hasError || this.$refs.author.hasError || this.$refs.status.hasError || this.$refs.isbn.hasError) {
             this.formHasError = true
             this.error = true
           } else {
