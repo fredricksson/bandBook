@@ -3,10 +3,9 @@
     <!-- content -->
     <div class="row q-gutter-y-md">
       <div class="col-12">
-        <nav-bar @showDialog="inception = true" @pesquisar="pesquisar"/>
+        <nav-bar @showDialog="inception = true" @pesquisar="pesquisar" @seachByStatus="seachByStatus"/>
       </div>
     <div class="col-12">
-      <div v-if="books.length">
       <q-card class="my-card q-mt-md">
         <q-card-section class="q-pb-none">
         <div class="text-h6">Livros</div>
@@ -17,11 +16,16 @@
           enter-active-class="animated fadeIn"
           leave-active-class="animated fadeOut"
         >
+       <div v-if="books.length">
           <div v-show="showSimulatedReturnData" class="row  q-gutter-md q-pa-md justify-center">
             <div class="col-md-3 col-12"  v-for="(book,index) in listBooks" :key="index">
-            <card-book :book="book" @removeIndex="removeIndex(index, book.title)" @updateState="updateState"/>
+            <card-book :book="book" @removeIndex="removeIndex(index, book.title)" @updateState="updateState" @updatePagination="updatePagination"/>
           </div>
           </div>
+       </div>
+        <div v-else>
+        <p class=" absolute-center"> <q-icon color="primary" name="hourglass_disabled" /> Adicione livros ou veja sua conexão a internet </p>
+       </div>
         </transition>
       </q-card-section>
         <div class="q-pa-lg flex flex-center">
@@ -37,13 +41,9 @@
       </q-inner-loading>
       </q-card>
     </div>
-    <div v-else>
-        <p class=" absolute-center"> <q-icon color="primary" name="hourglass_disabled" /> sem conteúdo (Livros) </p>
-    </div>
     <q-dialog v-model="inception">
       <form-book :book="book" @save="save" />
     </q-dialog>
-    </div>
     </div>
   </q-page>
 </template>
@@ -67,20 +67,44 @@ import navBar from 'src/components/navBar.vue'
 import CardBook from 'src/components/cardBook.vue'
 import FormBook from 'src/components/FormBook.vue'
 import { mapActions, mapState } from 'vuex'
-import { QSpinnerGears } from 'quasar'
+import { QSpinnerGears, QSpinnerFacebook } from 'quasar'
 import Vue from 'vue'
 export default {
   components: { navBar, CardBook, FormBook },
   name: 'MyBooks',
   mounted () {
+    this.$q.loading.show({
+      spinner: QSpinnerFacebook,
+      spinnerColor: 'yellow',
+      spinnerSize: 140,
+      backgroundColor: 'purple',
+      message: 'Iniciando BandBook',
+      messageColor: 'white'
+    })
     this.showSimulatedReturnData = true
-    this.setBooksPage().then(() => {
-      this.max = this.numPages
+    this.setBooksPage().then((response) => {
+      this.max = response.numPages
+      if (response.numPages === 0) this.current = 0
+      else this.current = 1
+      this.$q.loading.hide()
+      this.$q.notify({
+        message: 'Bem vindo ao BandBook, grave os livros que tem e desejados',
+        color: 'primary',
+        multiLine: true,
+        icon: 'sentiment_satisfied_alt',
+        actions: [
+          { label: 'fechar', color: 'yellow', handler: () => { /* ... */ } }
+        ]
+      })
+    }).catch((error) => {
+      console.log(error)
     })
   },
   data () {
     return {
-      current: 1,
+      status: 'All',
+      firstLoad: false,
+      current: 0,
       max: 0,
       visible: false,
       showSimulatedReturnData: false,
@@ -100,35 +124,49 @@ export default {
   computed: {
     ...mapState('book', ['books', 'numPages']),
     listBooks () {
-      if (this.search === '' || this.search === ' ') {
-        return this.books
+      // if state equals All it will retun all, else it will filter
+      if (this.search === '' || this.search === ' ' || this.status === '') {
+        if (this.status === 'All') return this.books
+        else return this.books.filter(book => book.title === this.search && book.status === this.status)
       } else {
-        console.log(this.search)
-        return this.books.filter(book => book.title === this.search)
+        if (this.status === 'All') return this.books.filter(book => book.title === this.search)
+        else return this.books.filter(book => book.title === this.search && book.status === this.status)
       }
     }
   },
   methods: {
     loadPage () {
-      this.visible = true
-      this.showSimulatedReturnData = false
-      this.setBooksPage(this.current - 1).then(() => {
-        this.max = this.numPages
-        this.visible = false
-        this.showSimulatedReturnData = true
-      })
+      if (this.firstLoad) {
+        this.visible = true
+        this.showSimulatedReturnData = false
+        this.setBooksPage(this.current - 1).then((res) => {
+          this.max = res.numPages
+          this.visible = false
+          this.showSimulatedReturnData = true
+        })
+      } else {
+        this.firstLoad = !this.firstLoad
+      }
     },
     updateState (data) {
-      console.log('yes br')
       this.updateBookAction(data)
+    },
+    seachByStatus (status) {
+      this.status = status.value
     },
     pesquisar (title) {
       this.search = title
     },
     removeIndex (index, title) {
+      this.updatePagination().then((response) => {
+        this.max = response.numPages
+        if (this.books.length === 1) this.current--
+      }).catch((error) => {
+        console.log('erro' + error)
+      })
       this.removeBook(index)
       this.$q.notify({
-        type: 'negative',
+        type: 'positive',
         message: `O ${title} foi apagado`
       })
     },
@@ -173,6 +211,7 @@ export default {
           this.book.images[0].image_url = url
           if (!this.book.status === 'Desejado') this.book.status = 'Owned'
           else this.book.status = 'Wished'
+          if (this.book.isbn === '') delete this.book.isbn
           Vue.prototype.$axios.post(`${process.env.API}api/v1/books`, this.book)
             .then(response => {
               dialog.update({
@@ -180,6 +219,12 @@ export default {
                 message: `${response.data.title} foi Salvo com sucesso`,
                 progress: false,
                 ok: true
+              })
+              this.updatePagination().then((response) => {
+                this.max = response.numPages
+                if (this.books.length === 1) this.current++
+              }).catch((error) => {
+                console.log('erro' + error)
               })
               this.book = { title: '', author: '', isbn: '', status: '', edition: '', images: [{ image_url: '', image_location: '', isCover: true }] }
               this.addBook({ id: response.data.id, title: response.data.title, status: response.data.status, author: response.data.author, image_url: url })
@@ -199,7 +244,7 @@ export default {
       }
       )
     },
-    ...mapActions('book', ['setBooks', 'addBook', 'removeBook', 'updateBookAction', 'setBooksPage']),
+    ...mapActions('book', ['setBooks', 'addBook', 'removeBook', 'updateBookAction', 'setBooksPage', 'updatePagination']),
     save (payload) {
       this.saveImgFirebase(payload)
     }

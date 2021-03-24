@@ -179,7 +179,7 @@ export default {
     },
     deleteBook (id) {
       this.loading3 = true
-      Vue.prototype.$axios.delete(`https://cors-anywhere.herokuapp.com/${process.env.API}api/v1/book/${id}`)
+      Vue.prototype.$axios.delete(`${process.env.API}api/v1/book/${id}`)
         .then(response => {
           this.$emit('removeIndex')
           this.loading3 = false
@@ -191,7 +191,8 @@ export default {
               console.log(error)
             })
           })
-        }).catch(() => {
+        }).catch((erro) => {
+          console.log(erro)
           this.loading3 = false
           this.$q.notify({
             type: 'negative',

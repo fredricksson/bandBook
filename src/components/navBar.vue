@@ -1,9 +1,9 @@
 <template>
  <div >
-   <div class="q-gutter-md q-mb-md">
+   <div class="q-gutter-md q-mb-md ">
      <q-card class="my-card">
-      <q-card-section class="row q-gutter-y-md ">
-        <div class="col-12 col-md-2 q-mr-md">
+      <q-card-section class="row q-gutter-md justify-center">
+        <div class="col-12 col-md-2">
        <q-btn color="teal" class="full-width " @click="showDialog()">
       <q-icon left size="3.4em" name="book" />
       <div>Adicionar Livro</div>
@@ -21,6 +21,24 @@
         </template>
       </q-input>
      </div>
+     <div class="col-12 col-md-3">
+       <q-select color="secondary" @input="seachByStatus($event)"  filled v-model="status" :options="options" label="Status">
+         <template v-slot:option="scope">
+          <q-item
+            v-bind="scope.itemProps"
+            v-on="scope.itemEvents"
+          >
+            <q-item-section avatar>
+              <q-icon :name="scope.opt.icon" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label v-html="scope.opt.label" />
+              <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+     </div>
       </q-card-section>
     </q-card>
    </div>
@@ -31,8 +49,29 @@
 export default {
   data () {
     return {
+      status: 'Todos',
       text: '',
-      dense: false
+      dense: false,
+      options: [
+        {
+          label: 'Todos',
+          value: 'All',
+          description: 'Todos Livros',
+          icon: 'view_list'
+        },
+        {
+          label: 'Proprietario',
+          value: 'Owned',
+          description: 'Seus livros',
+          icon: 'bookmark_added'
+        },
+        {
+          label: 'Desejado',
+          value: 'Wished',
+          description: 'Livros  que pretende ter',
+          icon: 'bookmark_border'
+        }
+      ]
     }
   },
   methods: {
@@ -40,6 +79,9 @@ export default {
       if (e.code === 'Enter') {
         this.$emit('pesquisar', this.text)
       }
+    },
+    seachByStatus (status) {
+      this.$emit('seachByStatus', status)
     },
     showDialog () {
       this.$emit('showDialog')

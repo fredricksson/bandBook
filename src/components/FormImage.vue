@@ -66,7 +66,7 @@ export default {
         const image = {
           image_url: data.url,
           image_location: data.location,
-          isCover: true
+          isCover: false
         }
         Vue.prototype.$axios.post(`${process.env.API}api/v1/image/${this.id}`, image)
           .then(response => {

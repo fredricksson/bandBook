@@ -1,22 +1,12 @@
 import Vue from 'vue'
-import { QSpinnerFacebook, Loading, Notify } from 'quasar'
+import { Notify } from 'quasar'
 
 const setBooks = ({ commit }) => {
-  Loading.show({
-    delay: 100,
-    spinner: QSpinnerFacebook,
-    spinnerColor: 'yellow',
-    spinnerSize: 140,
-    backgroundColor: 'purple',
-    message: 'carregando os livros...',
-    messageColor: 'white'
-  })
   return new Promise((resolve, reject) => {
     Vue.prototype.$axios.get(`${process.env.API}api/v1/books`)
       .then((response) => {
         // chamar uma mutacao para alterar o estado de post
         commit('SET_BOOKS', response.data)
-        Loading.hide()
         Notify.create({
           message: 'Bem vindo ao BandBook, grave os livros que tem e desejados',
           color: 'primary',
@@ -29,7 +19,6 @@ const setBooks = ({ commit }) => {
         resolve(response.data)
       })
       .catch((error) => {
-        Loading.hide()
         Notify.create({
           message: 'Aviso sem conexao a internet, pode ser a causa de não carregamento de dados',
           color: 'red',
@@ -44,34 +33,14 @@ const setBooks = ({ commit }) => {
   })
 }
 const setBooksPage = ({ commit }, page = 0) => {
-  Loading.show({
-    delay: 100,
-    spinner: QSpinnerFacebook,
-    spinnerColor: 'yellow',
-    spinnerSize: 140,
-    backgroundColor: 'purple',
-    message: 'carregando os livros...',
-    messageColor: 'white'
-  })
   return new Promise((resolve, reject) => {
     Vue.prototype.$axios.get(`${process.env.API}api/v1/books/page/${page}`)
       .then((response) => {
         // chamar uma mutacao para alterar o estado de post
         commit('SET_BOOKS_PAGE', response.data)
-        Loading.hide()
-        Notify.create({
-          message: 'Bem vindo ao BandBook, grave os livros que tem e desejados',
-          color: 'primary',
-          multiLine: true,
-          icon: 'sentiment_satisfied_alt',
-          actions: [
-            { label: 'fechar', color: 'yellow', handler: () => { /* ... */ } }
-          ]
-        })
         resolve(response.data)
       })
       .catch((error) => {
-        Loading.hide()
         Notify.create({
           message: 'Aviso sem conexao a internet, pode ser a causa de não carregamento de dados',
           color: 'red',
@@ -81,6 +50,18 @@ const setBooksPage = ({ commit }, page = 0) => {
             { label: 'Fechar', color: 'yellow', handler: () => { /* ... */ } }
           ]
         })
+        reject(error)
+      })
+  })
+}
+const updatePagination = () => {
+  return new Promise((resolve, reject) => {
+    Vue.prototype.$axios.get(`${process.env.API}api/v1/books/page/0`)
+      .then((response) => {
+        // chamar uma mutacao para alterar o estado de post
+        resolve(response.data)
+      })
+      .catch((error) => {
         reject(error)
       })
   })
@@ -115,5 +96,6 @@ export {
   addBook,
   removeBook,
   updateBookAction,
-  setBooksPage
+  setBooksPage,
+  updatePagination
 }

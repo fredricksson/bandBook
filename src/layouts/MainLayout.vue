@@ -13,7 +13,7 @@
 
       <q-tabs align="left">
         <q-route-tab to="/myBooks" label="Meus livros" />
-        <q-route-tab to="/desiredBooks" label="Livros Desejados" />
+        <q-route-tab to="/about" label="About" />
       </q-tabs>
     </q-header>
 
