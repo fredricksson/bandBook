@@ -10,7 +10,7 @@
     </q-btn>
      </div>
      <div class="col-12 col-md-6">
-        <q-input standout  bottom-slots v-model="text" label="pesquisar" counter maxlength="24" :dense="dense" @keydown="pesquisar($event)">
+        <q-input standout  bottom-slots v-model="text" label="pesquisar" counter maxlength="24" :dense="dense" @keyup.enter="pesquisar">
         <template v-slot:append>
           <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
           <q-icon name="search" />
@@ -22,7 +22,7 @@
       </q-input>
      </div>
      <div class="col-12 col-md-3">
-       <q-select color="secondary" @input="seachByStatus($event)"  filled v-model="status" :options="options" label="Status">
+       <q-select color="secondary" @input="seachByStatus"  filled v-model="status" :options="options" label="Status">
          <template v-slot:option="scope">
           <q-item
             v-bind="scope.itemProps"
@@ -75,13 +75,11 @@ export default {
     }
   },
   methods: {
-    pesquisar (e) {
-      if (e.code === 'Enter') {
-        this.$emit('pesquisar', this.text)
-      }
+    pesquisar () {
+      this.$emit('pesquisar', this.text)
     },
-    seachByStatus (status) {
-      this.$emit('seachByStatus', status)
+    seachByStatus () {
+      this.$emit('seachByStatus', this.status)
     },
     showDialog () {
       this.$emit('showDialog')

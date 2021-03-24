@@ -120,8 +120,8 @@ module.exports = function (ctx) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Quasar App',
-        short_name: 'Quasar App',
+        name: 'BandBook',
+        short_name: 'BandBook',
         description: 'uma aplicacao de livros',
         display: 'standalone',
         orientation: 'portrait',

@@ -2,7 +2,7 @@
   "name": "bookclient",
   "version": "0.0.1",
   "description": "uma aplicacao de livros",
-  "productName": "Quasar App",
+  "productName": "BandBook",
   "author": "fredricksson <bandefredrickson@gmail.com>",
   "private": true,
   "scripts": {

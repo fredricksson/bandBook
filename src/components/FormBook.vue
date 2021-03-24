@@ -114,6 +114,7 @@
         <q-stepper-navigation>
           <q-btn @click="stepper()" color="primary" :label="step === 2 ? 'Salvar' : 'Continue'" />
           <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
+            <q-btn flat label="Fechar" color="secondary" v-close-popup />
         </q-stepper-navigation>
       </template>
     </q-stepper>

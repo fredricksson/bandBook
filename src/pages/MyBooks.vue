@@ -128,10 +128,10 @@ export default {
       // if state equals All it will retun all, else it will filter
       if (this.search === '' || this.search === ' ' || this.status === '') {
         if (this.status === 'All') return this.books
-        else return this.books.filter(book => book.title === this.search && book.status === this.status)
+        else return this.books.filter(book => book.title === this.search || book.status === this.status)
       } else {
         if (this.status === 'All') return this.books.filter(book => book.title === this.search)
-        else return this.books.filter(book => book.title === this.search && book.status === this.status)
+        else return this.books.filter(book => book.title === this.search || book.status === this.status)
       }
     }
   },

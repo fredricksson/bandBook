@@ -1,7 +1,8 @@
 <template>
-<div class="q-pa-md row items-start q-gutter-md ">
-  <q-card class="my-card" flat bordered>
-      <q-item>
+<div class="q-pa-md  items-start q-gutter-md ">
+  <q-card class="my-card row " flat bordered>
+        <q-card-section class="row items-center q-pb-none">
+          <q-item>
         <q-item-section avatar>
           <q-avatar>
             <img src="../assets/logo.png">
@@ -15,13 +16,10 @@
           </q-item-label>
         </q-item-section>
       </q-item>
-
       <q-separator />
-
-      <q-card-section horizontal>
-        <q-card-section>
-          <div class="col-12">
-               <q-uploader
+      <q-card-section  class="col-12">
+          <div >
+               <q-uploader class="full-width"
                   extensions=".jpg, .png, .jpeg"
                   multiple
                   :factory="uploadFile"
@@ -31,12 +29,12 @@
                   stack-label="upload image"
                 />
          </div>
-        </q-card-section>
-
-        <q-separator vertical />
-
       </q-card-section>
-    </q-card>
+      <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Fechar" v-close-popup />
+        </q-card-actions>
+        </q-card-section>
+  </q-card>
 </div>
 </template>
 
