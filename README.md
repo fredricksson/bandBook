@@ -2,6 +2,9 @@
 
 uma aplicacao de livros
 
+## Documentation of API consumed
+https://bookeepyapi.netlify.app/#tag/Book
+
 ## Install the dependencies
 ```bash
 npm install
