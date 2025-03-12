@@ -1,9 +1,45 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" version="26.1.0">
   <diagram name="Página-1" id="Gv6zYnUD5RejrQ_Xt8cw">
-    <mxGraphModel>
+    <mxGraphModel dx="1290" dy="1742" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="180" y="-30" width="530" height="530" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-2" value="Edicao de subscricao" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="190" y="-72" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-3" value="Modules" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="50" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-4" value="" style="triangle;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+          <mxGeometry x="520" y="65" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-5" value="http://server.jampaia.com/api/v1/subscription-plan/modules" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="720" y="65" width="340" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-7" value="Endpoins" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="280" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-8" value="" style="triangle;whiteSpace=wrap;html=1;rotation=90;" vertex="1" parent="1">
+          <mxGeometry x="520" y="275" width="40" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-9" value="READ" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="202.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-10" value="WRITE" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="130" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-11" value="http://server.jampaia.com/api/v1/subscription-plan/endpoints/a354a68a-018e-4c17-9f04-349ede9d6e35" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="710" y="300" width="570" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-12" value="Salvar" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="440" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yRzbyNK8KcgReRmgEvmi-13" value="add" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="360" width="320" height="60" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
